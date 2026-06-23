@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Restockly — back-in-stock alerts that can't fail silently</title>
+<meta name="description" content="Restockly emails your shoppers the moment a sold-out item is back, proves every send, warns you instantly if one fails, and shows the money waiting on each out-of-stock product. Get early access.">
+<style>
+  :root{
+    --navy:#16172a; --ink:#1f2233; --grey:#5f6573; --line:#e6e8ee;
+    --bg:#eef0f3; --card:#ffffff; --indigo:#3538cd; --indigo-h:#2c2fb4;
+    --green:#1f9d57; --red:#c4362f; --soft:#f5f7fa;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);
+    background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  a{color:var(--indigo);text-decoration:none}
+
+  /* top bar */
+  .top{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:20px;color:var(--navy)}
+  .pill{font-size:12.5px;font-weight:600;color:var(--indigo);background:#eceefe;
+    border:1px solid #d9ddfb;border-radius:999px;padding:5px 12px}
+
+  /* hero */
+  .hero{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center;padding:34px 0 54px}
+  .eyebrow{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--indigo);margin-bottom:14px}
+  h1{font-size:43px;line-height:1.08;font-weight:760;color:var(--navy);letter-spacing:-.015em;margin-bottom:16px}
+  h1 .u{background:linear-gradient(transparent 62%,#ffe39e 62%)}
+  .sub{font-size:18px;color:var(--grey);margin-bottom:26px;max-width:30em}
+
+  /* form card */
+  .form{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:20px;box-shadow:0 10px 34px rgba(20,23,42,.08)}
+  .form .lead{font-weight:650;color:var(--navy);font-size:15px;margin-bottom:12px}
+  .field{display:block;width:100%;font-size:15px;color:var(--ink);background:#fff;
+    border:1.5px solid #dfe2ea;border-radius:10px;padding:13px 14px;margin-bottom:10px;font-family:inherit}
+  .field:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px #e2e4fb}
+  textarea.field{resize:vertical;min-height:44px}
+  .btn{display:block;width:100%;cursor:pointer;border:none;border-radius:10px;
+    background:var(--indigo);color:#fff;font-weight:700;font-size:16px;padding:14px;font-family:inherit;
+    transition:background .15s,transform .05s}
+  .btn:hover{background:#2c2fb4}
+  .btn:active{transform:translateY(1px)}
+  .btn[disabled]{opacity:.65;cursor:default}
+  .micro{font-size:12.5px;color:#8b909c;margin-top:11px;text-align:center}
+  .micro b{color:var(--grey);font-weight:600}
+  .ok{display:none;text-align:center;padding:14px 6px}
+  .ok .big{font-size:18px;font-weight:700;color:var(--green);margin-bottom:6px}
+  .ok .sm{font-size:14px;color:var(--grey)}
+  .err{display:none;color:var(--red);font-size:13px;margin-top:8px;text-align:center}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+
+  /* shot */
+  .shot{margin:0}
+  .shot img{width:100%;height:auto;display:block;border-radius:14px;
+    box-shadow:0 18px 50px rgba(20,23,42,.16)}
+  .shotcap{font-size:13px;color:#8b909c;text-align:center;margin-top:12px}
+
+  /* problem strip */
+  .strip{background:var(--navy);color:#fff;padding:44px 0;margin-top:8px}
+  .strip h2{font-size:25px;font-weight:720;letter-spacing:-.01em;margin-bottom:14px}
+  .quote{border-left:3px solid #ffd24a;padding:6px 0 6px 16px;margin:18px 0;
+    font-size:18px;font-style:italic;color:#e9eaf3;max-width:40em}
+  .strip p{color:#b9bdce;font-size:16px;max-width:44em}
+  .strip .em{color:#fff;font-weight:650}
+
+  /* features */
+  .feat{padding:56px 0 16px}
+  .feat .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:24px}
+  .ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+    font-size:21px;margin-bottom:14px}
+  .ic.b{background:#eceefe}.ic.g{background:#e4f6ec}.ic.m{background:#fdf2dd}
+  .card h3{font-size:17px;color:var(--navy);font-weight:700;margin-bottom:7px}
+  .card p{font-size:14.5px;color:var(--grey)}
+  .tag{font-size:11.5px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:.04em;margin-top:10px}
+
+  /* closing */
+  .close{text-align:center;padding:54px 0 60px}
+  .close h2{font-size:28px;color:var(--navy);font-weight:740;margin-bottom:10px}
+  .close p{color:var(--grey);font-size:16.5px;margin-bottom:22px}
+  .cta2{display:inline-block;background:var(--indigo);color:#fff;font-weight:700;font-size:16px;
+    padding:14px 30px;border-radius:11px}
+  .cta2:hover{background:#2c2fb4}
+
+  footer{border-top:1px solid var(--line);padding:26px 0;color:#9aa0ac;font-size:13px;text-align:center}
+
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr;gap:30px;padding:14px 0 38px}
+    h1{font-size:33px}.sub{font-size:17px}
+    .feat .grid{grid-template-columns:1fr}
+    .shot{order:-1}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand"><span>🔔</span> Restockly</div>
+      <span class="pill">Early access</span>
+    </div>
+
+    <section class="hero">
+      <div>
+        <div class="eyebrow">For Shopify store owners</div>
+        <h1>Back-in-stock alerts that <span class="u">can&rsquo;t fail silently</span>.</h1>
+        <p class="sub">Restockly emails your shoppers the moment a sold-out item is back &mdash; logs every send, warns <em>you</em> instantly if one fails, and shows the money waiting on each out-of-stock product.</p>
+
+        <form class="form" id="f" novalidate>
+          <div class="lead">Get early access &mdash; free for first users</div>
+          <input class="field" type="email" name="email" id="email" placeholder="Your email address" autocomplete="email" required>
+          <input class="field" type="text" name="store" id="store" placeholder="Your store URL (optional)" autocomplete="off">
+          <textarea class="field" name="notes" id="notes" placeholder="What would make this a must-have for you? (optional)"></textarea>
+          <input class="hp" type="text" name="company" id="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button class="btn" type="submit" id="btn">Get early access</button>
+          <div class="micro"><b>One email when it&rsquo;s ready.</b> No spam, and your address is never shared.</div>
+          <div class="err" id="err"></div>
+          <div class="ok" id="ok">
+            <div class="big">You&rsquo;re on the list 🎉</div>
+            <div class="sm">I&rsquo;ll email you the moment early access opens. Thank you for helping shape it.</div>
+          </div>
+        </form>
+      </div>
+
+      <figure class="shot">
+        <img src="dashboard.png" alt="Restockly dashboard showing money waiting on sold-out items, a restock priority list, and a failed-send alert">
+        <figcaption class="shotcap">The merchant dashboard — what no other restock app shows you.</figcaption>
+      </figure>
+    </section>
+  </div>
+
+  <section class="strip">
+    <div class="wrap">
+      <h2>Most back-in-stock apps fail silently.</h2>
+      <p>They blast your shoppers an email and call it done. When the sending quietly breaks &mdash; and it does &mdash; nobody tells you. You just stop making the sales, and never know why. Real Shopify reviews of the popular apps:</p>
+      <div class="quote">&ldquo;More than 5,000 people signed up for restock alerts &mdash; the app didn&rsquo;t send a single email.&rdquo;</div>
+      <p><span class="em">Restockly is built so that can&rsquo;t happen to you.</span> Every send is logged, and the second one fails, you get an alert &mdash; before the lost sale becomes invisible.</p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="feat">
+      <div class="grid">
+        <div class="card">
+          <div class="ic b">🔔</div>
+          <h3>Never miss a restock</h3>
+          <p>Shoppers click &ldquo;notify me&rdquo; on any sold-out item. The moment stock returns, everyone waiting is emailed automatically &mdash; in order.</p>
+        </div>
+        <div class="card">
+          <div class="ic g">✓</div>
+          <h3>Proof every email sent</h3>
+          <p>See a live log of every alert that went out &mdash; and get warned the instant one fails to send, so a silent break can&rsquo;t cost you sales.</p>
+          <div class="tag">The part nobody else does</div>
+        </div>
+        <div class="card">
+          <div class="ic m">💰</div>
+          <h3>See the money waiting</h3>
+          <p>The dollar value of demand sitting in each sold-out variant &mdash; so you restock what&rsquo;ll actually pay you back first, not by guesswork.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="close">
+      <h2>Help shape it &mdash; and get it free.</h2>
+      <p>Restockly is being built right now. Early-access users get it free and help decide what it becomes.</p>
+      <a class="cta2" href="#email" onclick="document.getElementById('email').focus()">Get early access</a>
+    </section>
+  </div>
+
+  <footer>
+    <div class="wrap">Restockly &mdash; back-in-stock done right for Shopify. Built by an indie maker, validating before launch. &copy; 2026</div>
+  </footer>
+
+<script>
+  // ---- Capture config: fill these in after creating the Google Form ----
+  // action = the form's .../formResponse URL; fields map our inputs to its entry.NNN names.
+  var CAPTURE = {
+    action: "https://docs.google.com/forms/d/e/1FAIpQLSeRQYbr9fA1VfEiCHfmsfSvfwFgNMGEJysuscjahWKQnBJHNg/formResponse",
+    fields: { email: "entry.1883891046", store: "entry.1381479905", notes: "entry.1221894024" }
+  };
+
+  var f = document.getElementById('f'),
+      btn = document.getElementById('btn'),
+      ok = document.getElementById('ok'),
+      err = document.getElementById('err');
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function fail(msg){ err.textContent = msg; err.style.display = 'block'; }
+
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    err.style.display = 'none';
+    if (document.getElementById('company').value) return; // honeypot
+    var email = document.getElementById('email').value.trim();
+    if (!EMAIL_RE.test(email)) { fail('Please enter a valid email address.'); return; }
+
+    btn.disabled = true; btn.textContent = 'Joining…';
+
+    var fd = new FormData();
+    fd.append(CAPTURE.fields.email, email);
+    fd.append(CAPTURE.fields.store, document.getElementById('store').value.trim());
+    fd.append(CAPTURE.fields.notes, document.getElementById('notes').value.trim());
+
+    var done = function(){
+      f.querySelectorAll('.field,.btn,.lead,.micro').forEach(function(n){ n.style.display='none'; });
+      ok.style.display = 'block';
+    };
+
+    if (CAPTURE.action.indexOf('http') !== 0) { done(); return; } // not wired yet: optimistic
+
+    // Google Forms is no-cors: we can't read the response, so resolve OR reject both = submitted.
+    fetch(CAPTURE.action, { method:'POST', mode:'no-cors', body: fd })
+      .then(done).catch(done);
+  });
+</script>
+</body>
+</html>
