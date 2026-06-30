@@ -1,0 +1,17 @@
+# PingMyStock
+
+> PingMyStock is a back-in-stock notification app for Shopify. When a sold-out product is restocked, it emails the shoppers who asked to be notified, logs every send with its delivery status, alerts the merchant straight away if a send fails, and shows a dashboard of the dollar value of demand waiting on each out-of-stock product. Free to install on the Shopify App Store.
+
+## Key pages
+
+- [Home](https://pingmystock.com/): What PingMyStock does, who it is for, and how the send-tracking and demand-dashboard features work.
+- [Appikon alternative](https://pingmystock.com/appikon-alternative.html): For Shopify stores moving off Appikon's back-in-stock app, a reliable replacement with proof of every send and a dashboard of the demand waiting on each sold-out item.
+- [Shopify App Store listing](https://apps.shopify.com/pingmystock): Install PingMyStock free on a Shopify store.
+- [Privacy policy](https://pingmystock.com/privacy.html): How PingMyStock handles store and shopper data.
+
+## Details
+
+- Platform: Shopify. Categories: back-in-stock alerts, restock notifications, out-of-stock waitlist.
+- Pricing: free to install.
+- Built for merchants who want proof their restock emails actually send, an instant alert if one fails, and a clear view of the revenue waiting on each sold-out product.
+- Contact: hello@pingmystock.com
